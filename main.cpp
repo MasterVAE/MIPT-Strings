@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 
 void my_puts(const char *str);
 char *my_strchr(const char *str, char c);
@@ -21,9 +22,16 @@ int main()
 
     //printf("%d\n", my_atoi("14f23"));
 
-    char str2[10];
-    my_fgets(str2, 10, stdin);
-    printf("%s\n", str2);
+    //char str2[10];
+    //my_fgets(str2, 10, stdin);
+
+    char str1[50] = "teleb";
+    //char *str2 = "bobdsmdnmfg";
+    //my_strncat(str1, str2, 3);
+    //printf("%s\n", str1);
+
+    my_fgets(str1, 10, stdin);
+    printf("%s\n", str1);
 
     return 1;
 }
@@ -67,35 +75,28 @@ size_t my_strlen(const char *str)
 // +
 void my_strcat(char *str1, const char *str2)
 {
-    while(*str1 != '\0')
-    {
-        str1++;
-    }
+    assert(str1 != NULL);
+
+    char* end_str1 = str1 + my_strlen(str1);
     while(*str2 != '\0')
     {
-        str1 = str2;
-        str1++;
-        str2++;
+        *(end_str1++) = *(str2++);
     }
-    str1 = '\0';
+    end_str1 = '\0';
 }
 
 // +
 void my_strncat(char *str1, const char* str2, int lent)
 {
-    // FIXME assert
-    while(*str1 != '\0')
+    assert(str1 != NULL);
+
+    char* end_str1 = str1 + my_strlen(str1);
+    int j = 0;
+    while(*str2 != '\0' && (j++)<lent)
     {
-        str1++;
+        *(end_str1++) = *(str2++);
     }
-    char* end_str2 = str2 + strlen(str1);
-    while(str2[j] != '\0' && j<lent)
-    {
-        *str1 = str2[j];
-        str1++;
-        j++;
-    }
-    str1 = '\0';
+    end_str1 = '\0';
 }
 
 // +
@@ -125,10 +126,13 @@ int my_atoi(const char* str)
 // FIXME
 void my_fgets(char* str, int cnt, FILE* file)
 {
+    assert(str1 != NULL);
+
     int i = 0;
-    while((i++) < cnt)
+    char last_char;
+    while((i++) < cnt && (last_char = (char)fgetc(file)) != EOF && last_char != '\n')
     {
-        *(str++) = (char)fgetc(file);
+        *(str++) = last_char;
     }
     *str = '\0';
 }
