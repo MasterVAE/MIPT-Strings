@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <stdlib.h>
 
 void my_puts(const char *str);
 char *my_strchr(const char *str, char c);
@@ -8,33 +9,18 @@ void my_strcat(char* str1, const char* str2);
 void my_strncat(char str1[], const char* str2, int lent);
 int my_atoi(const char* str);
 void my_fgets(char* str, int cnt, FILE* file);
-void my_getline(char* str, FILE *file);
+char *my_getline(char **str, int *n, FILE *file);
 char *my_strstr(char *str1, const char *str2);
+char *my_strdup(const char *str1);
 
 int main()
 {
-    //const char* str = "abcdefg";
-    //my_puts(str);
-    //printf("%c\n", *(my_strchr(str, 'e')));
-    //printf("%d\n", my_strlen(str));
 
-    //char str1[10] = "string1";
-    //my_strncat(str1, "string2", 2);
-    //printf("%s\n", str1);
 
-    printf("%d\n", my_atoi("-14f23"));
-
-    //char str2[10];
-    //my_fgets(str2, 10, stdin);
-
-    char str1[50] = "teleb";
-    //char *str2 = "bobdsmdnmfg";
-    //my_strncat(str1, str2, 3);
-    //printf("%s\n", str1);
-
-    //my_getline(str1, stdin);
-    printf("%s\n", my_strstr(str1, "e"));
-
+    int y = 5;
+    char *str = (char *)calloc(y, sizeof(char));
+    char **bob = &str;
+    printf("%s", my_getline(bob, &y, stdin));
     return 1;
 }
 
@@ -147,16 +133,33 @@ void my_fgets(char *str, int cnt, FILE *file)
     *str = '\0';
 }
 
-void my_getline(char *str, FILE *file)
+char *my_getline(char **str1, int *n, FILE *file)
 {
+    assert(str1 != NULL);
+
+    char *str = *str1;
+
     assert(str != NULL);
 
+
     char last_char;
+    int counter = 0;
+
     while((last_char = (char)fgetc(file)) != EOF && last_char != '\n')
     {
-        *(str++) = last_char;
+        if(counter >= *n)
+        {
+            *n += 100;
+            str = (char *)realloc(str, (*n) * sizeof(char));
+
+        }
+
+        str[counter++] = last_char;
+
+
     }
-    *str = '\0';
+    str[counter] = '\0';
+    return str;
 }
 
 char *my_strstr(char *str1, const char *str2)
@@ -185,4 +188,21 @@ char *my_strstr(char *str1, const char *str2)
     }
 
     return NULL;
+}
+
+
+char *my_strdup(const char *str1)
+{
+    size_t len = my_strlen(str1) + 1;
+    int counter = 0;
+    char *str2 = (char *)calloc(len, sizeof(char));
+
+    assert(str2 != NULL);
+
+    while(counter++ < len)
+    {
+        *(str2++) = *(str1++);
+    }
+
+    return str2-len;
 }
