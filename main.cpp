@@ -8,6 +8,8 @@ void my_strcat(char* str1, const char* str2);
 void my_strncat(char str1[], const char* str2, int lent);
 int my_atoi(const char* str);
 void my_fgets(char* str, int cnt, FILE* file);
+void my_getline(char* str, FILE *file);
+char *my_strstr(char *str1, const char *str2);
 
 int main()
 {
@@ -20,7 +22,7 @@ int main()
     //my_strncat(str1, "string2", 2);
     //printf("%s\n", str1);
 
-    //printf("%d\n", my_atoi("14f23"));
+    printf("%d\n", my_atoi("-14f23"));
 
     //char str2[10];
     //my_fgets(str2, 10, stdin);
@@ -30,8 +32,8 @@ int main()
     //my_strncat(str1, str2, 3);
     //printf("%s\n", str1);
 
-    my_fgets(str1, 10, stdin);
-    printf("%s\n", str1);
+    //my_getline(str1, stdin);
+    printf("%s\n", my_strstr(str1, "e"));
 
     return 1;
 }
@@ -100,21 +102,30 @@ void my_strncat(char *str1, const char* str2, int lent)
 }
 
 // +
-int my_atoi(const char* str)
+int my_atoi(const char *str)
 {
     int negative = 0;
     int ans = 0;
+
+    if(*str == '-')
+    {
+        negative = 1;
+        str++;
+    }
+    else if(*str == '+')
+    {
+        str++;
+    }
     while(*str != '\0')
     {
-
-        if(*str == '-')
-        {
-            negative = 1;
-        }
-        else if(*str <= '9' && *str >= '0')
+        if(*str <= '9' && *str >= '0')
         {
             ans *= 10;
             ans += *str - '0';
+        }
+        else
+        {
+            return negative ? -ans : ans;
         }
         str++;
     }
@@ -122,11 +133,10 @@ int my_atoi(const char* str)
     return negative ? -ans : ans;
 }
 
-
 // FIXME
-void my_fgets(char* str, int cnt, FILE* file)
+void my_fgets(char *str, int cnt, FILE *file)
 {
-    assert(str1 != NULL);
+    assert(str != NULL);
 
     int i = 0;
     char last_char;
@@ -135,4 +145,44 @@ void my_fgets(char* str, int cnt, FILE* file)
         *(str++) = last_char;
     }
     *str = '\0';
+}
+
+void my_getline(char *str, FILE *file)
+{
+    assert(str != NULL);
+
+    char last_char;
+    while((last_char = (char)fgetc(file)) != EOF && last_char != '\n')
+    {
+        *(str++) = last_char;
+    }
+    *str = '\0';
+}
+
+char *my_strstr(char *str1, const char *str2)
+{
+    int i = 0;
+    while(*str1 != '\0')
+    {
+        i = 0;
+
+        int flag = 1;
+        while(str1[i] != '\0' &&  str2[i] != '\0')
+        {
+             if(str1[i] != str2[i])
+             {
+                flag = 0;
+                break;
+             }
+             i++;
+        }
+
+        if(flag)
+        {
+            return(str1);
+        }
+        str1++;
+    }
+
+    return NULL;
 }
