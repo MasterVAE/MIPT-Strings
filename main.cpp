@@ -5,8 +5,8 @@
 void my_puts(const char *str);
 char *my_strchr(const char *str, char c);
 size_t my_strlen(const char *str);
-void my_strcat(char* str1, const char* str2);
-void my_strncat(char str1[], const char* str2, int lent);
+char *my_strcat(char* str1, const char* str2);
+char *my_strncat(char str1[], const char* str2, int lent);
 int my_atoi(const char* str);
 void my_fgets(char* str, int cnt, FILE* file);
 char *my_getline(char **str, int *n, FILE *file);
@@ -15,22 +15,21 @@ char *my_strdup(const char *str1);
 
 int main()
 {
-
-
     int y = 5;
     char *str = (char *)calloc(y, sizeof(char));
     char **bob = &str;
-    printf("%s", my_getline(bob, &y, stdin));
+    printf("%s\n", my_getline(bob, &y, stdin));
+
+    printf("%d\n", my_atoi("       +12g6"));
     return 1;
 }
 
 // +
 void my_puts(const char *str)
 {
-    while(*str != '\0')
+    while(*str != '\0' && *str != EOF)
     {
-        putchar(*str);
-        str++;
+        putchar(*(str++));
     }
     putchar('\n');
 }
@@ -46,13 +45,19 @@ char *my_strchr(const char *str, char c)
         }
         str++;
     }
+
+    if(*str == c)
+    {
+        return((char *)str);
+    }
+
     return(NULL);
 }
 
 // +
 size_t my_strlen(const char *str)
 {
-    int size = 0;
+    size_t size = 0;
     while(*(str++) != '\0')
     {
         size++;
@@ -61,7 +66,7 @@ size_t my_strlen(const char *str)
 }
 
 // +
-void my_strcat(char *str1, const char *str2)
+char *my_strcat(char *str1, const char *str2)
 {
     assert(str1 != NULL);
 
@@ -70,21 +75,25 @@ void my_strcat(char *str1, const char *str2)
     {
         *(end_str1++) = *(str2++);
     }
-    end_str1 = '\0';
+    *end_str1 = '\0';
+
+    return str1;
 }
 
 // +
-void my_strncat(char *str1, const char* str2, int lent)
+char *my_strncat(char *str1, const char* str2, int lent)
 {
     assert(str1 != NULL);
 
     char* end_str1 = str1 + my_strlen(str1);
-    int j = 0;
-    while(*str2 != '\0' && (j++)<lent)
+    int counter = 0;
+    while(*str2 != '\0' && (counter++)<lent)
     {
         *(end_str1++) = *(str2++);
     }
-    end_str1 = '\0';
+    *end_str1 = '\0';
+
+    return str1;
 }
 
 // +
@@ -93,6 +102,10 @@ int my_atoi(const char *str)
     int negative = 0;
     int ans = 0;
 
+    while(*str == ' ' && *str != '\0')
+    {
+        str++;
+    }
     if(*str == '-')
     {
         negative = 1;
@@ -119,7 +132,7 @@ int my_atoi(const char *str)
     return negative ? -ans : ans;
 }
 
-// FIXME
+// + 
 void my_fgets(char *str, int cnt, FILE *file)
 {
     assert(str != NULL);
@@ -133,13 +146,15 @@ void my_fgets(char *str, int cnt, FILE *file)
     *str = '\0';
 }
 
-char *my_getline(char **str1, int *n, FILE *file)
+// +
+char *my_getline(char **str, int *n, FILE *file)
 {
-    assert(str1 != NULL);
-
-    char *str = *str1;
-
     assert(str != NULL);
+    assert(file != NULL);
+
+    char *string = *str;
+
+    assert(string != NULL);
 
 
     char last_char;
@@ -150,20 +165,22 @@ char *my_getline(char **str1, int *n, FILE *file)
         if(counter >= *n)
         {
             *n += 100;
-            str = (char *)realloc(str, (*n) * sizeof(char));
+            string = (char *)realloc(string, (*n) * sizeof(char));
 
         }
 
-        str[counter++] = last_char;
-
-
+        string[counter++] = last_char;
     }
-    str[counter] = '\0';
-    return str;
+    string[counter] = '\0';
+    str = &string;
+    return string;
 }
 
+// +
 char *my_strstr(char *str1, const char *str2)
 {
+    assert(str1 != NULL);
+
     int i = 0;
     while(*str1 != '\0')
     {
@@ -190,7 +207,7 @@ char *my_strstr(char *str1, const char *str2)
     return NULL;
 }
 
-
+//  +
 char *my_strdup(const char *str1)
 {
     size_t len = my_strlen(str1) + 1;
